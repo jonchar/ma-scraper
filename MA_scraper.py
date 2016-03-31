@@ -1,8 +1,7 @@
 import datetime
 import json
 import requests
-from bs4 import BeautifulSoup
-import pandas as pd
+from pandas import DataFrame
 
 BASEURL = 'http://www.metal-archives.com'
 RELURL = '/browse/ajax-letter/json/1/l/'
@@ -19,7 +18,7 @@ column_names = ['NameLink', 'Country', 'Genre', 'Status']
 
 letters = 'NBR A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split()
 
-data = pd.DataFrame()
+data = DataFrame()
 
 date_of_parsing = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 
@@ -41,7 +40,7 @@ for letter in letters:
             try:
                 r = get_url(letter=letter, start=start, length=response_len)
                 js = r.json()
-                df = pd.DataFrame(js['aaData'])
+                df = DataFrame(js['aaData'])
                 data = data.append(df)
             except JSONDecodeError:
                 print('JSONDecodeError on attempt ', attempt, ' of 10.')
@@ -53,13 +52,14 @@ data.columns = column_names
 print('Writing data to csv...')
 data.to_csv('MA-band-names_' + date_of_parsing + '.csv')
 print('Complete!')
+
 # Approach:
 # For each {NBR, A-Z}
 # Read number of entries for given letter using result from `get_url`
-# Determine how many requests of 200 entries are required, issue requests
+# Determine how many requests of 500 entries are required, issue requests
 # Read JSON as returned by `get_url` using `json.loads`
-# Read contents in 'aaData' key using `pd.DataFrame`
+# Read contents in 'aaData' key using `DataFrame`
 # Set column names using `column_names` from above
 # Clean up columns
 # Concatenate & store outputs in a DataFrame
-
+# Save final DataFrame to csv
