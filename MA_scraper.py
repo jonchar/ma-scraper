@@ -64,8 +64,13 @@ for letter in letters:
 
 # Set informative names
 data.columns = column_names
-print('Writing data to csv...')
+
+# Current index corresponds to index in smaller chunks concatenated
+# Reset index to start at 0 and end at number of bands
+data.index = range(len(data))
+
 # Save to CSV
+print('Writing data to csv...')
 data.to_csv('MA-band-names_' + date_of_parsing + '.csv')
 print('Complete!')
 
