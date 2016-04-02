@@ -1,3 +1,22 @@
+#! /usr/bin/env python
+#
+# Script for scraping band names and basic associated information from
+# http://www.metal-archives.com
+#
+# Author: Jon Charest (http://github.com/jonchar
+# Year: 2016
+#
+# Approach:
+# For each {NBR, A-Z}
+# Read number of entries for given letter using result from `get_url`
+# Determine how many requests of 500 entries are required, issue requests
+# Read JSON as returned by `get_url` using `json.loads`
+# Read contents in 'aaData' key using `DataFrame`
+# Set column names using `column_names` from above
+# Clean up columns
+# Concatenate & store outputs in a DataFrame
+# Save final DataFrame to csv
+
 import datetime
 import json
 import requests
@@ -8,13 +27,13 @@ RELURL = '/browse/ajax-letter/json/1/l/'
 response_len = 500
 
 def get_url(letter='A', start=0, length=500):
-    """Gets the listings displayed as alphabetical tables on M-A for input `letter`,
-    starting at `start` and ending at `start` + `length`.
+    """Gets the listings displayed as alphabetical tables on M-A for input
+    `letter`, starting at `start` and ending at `start` + `length`.
     Returns a `Response` object, containing the data in JSON format."""
     
-    payload = {'sEcho': 0,               # if not set, text of the response is not valid JSON
-               'iDisplayStart': start,   # set starting index of band names returned
-               'iDisplayLength': length} # only response lengths of 500 appear to work
+    payload = {'sEcho': 0,  # if not set, response text is not valid JSON
+               'iDisplayStart': start,  # set start index of band names returned
+               'iDisplayLength': length} # only response lengths of 500 work
     
     r = requests.get(BASEURL + RELURL + letter, params=payload)
     
@@ -73,14 +92,3 @@ data.index = range(len(data))
 print('Writing data to csv...')
 data.to_csv('MA-band-names_' + date_of_parsing + '.csv')
 print('Complete!')
-
-# Approach:
-# For each {NBR, A-Z}
-# Read number of entries for given letter using result from `get_url`
-# Determine how many requests of 500 entries are required, issue requests
-# Read JSON as returned by `get_url` using `json.loads`
-# Read contents in 'aaData' key using `DataFrame`
-# Set column names using `column_names` from above
-# Clean up columns
-# Concatenate & store outputs in a DataFrame
-# Save final DataFrame to csv

@@ -34,13 +34,13 @@ The collected information is then stored in a \*.csv file with the following
 column headers and data types:
 
 * `'NameLink'`: HTML snippet containing band name and link to corresponding
-band page on Metal Archives
+band page on Metal Archives (HTML string)
 
-* `'Country'`: String descriptor of country of origin
+* `'Country'`: Country of origin (string)
 
-* `'Genre'`: String description of band genre (not standardized)
+* `'Genre'`: Description of band genre (string, terms not standardized)
 
-* `'Status'`: HTML snippet describing band status (active / split-up / changed
+* `'Status'`: HTML snippet describing band status (HTML string, active / split-up / changed
 name / on hold / unknown / disputed)
 
 Total number of bands may vary as the site is regularly updated.
