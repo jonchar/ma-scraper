@@ -10,15 +10,14 @@
 # For each {NBR, A-Z}
 # Read number of entries for given letter using result from `get_url`
 # Determine how many requests of 500 entries are required, issue requests
-# Read JSON as returned by `get_url` using `json.loads`
-# Read contents in 'aaData' key using `DataFrame`
-# Set column names using `column_names` from above
+# Read JSON in the `Requests` object returned by `get_url` using `r.json()`
+# Read contents in 'aaData' key into a pandas `DataFrame`
+# Set column names to `column_names`
 # Clean up columns
 # Concatenate & store outputs in a DataFrame
 # Save final DataFrame to csv
 
 import datetime
-import json
 import requests
 from pandas import DataFrame
 
@@ -29,7 +28,8 @@ response_len = 500
 def get_url(letter='A', start=0, length=500):
     """Gets the listings displayed as alphabetical tables on M-A for input
     `letter`, starting at `start` and ending at `start` + `length`.
-    Returns a `Response` object, containing the data in JSON format."""
+    Returns a `Response` object. Data can be accessed by callingt the `json()`
+    method of the returned `Response` object."""
     
     payload = {'sEcho': 0,  # if not set, response text is not valid JSON
                'iDisplayStart': start,  # set start index of band names returned
@@ -45,7 +45,7 @@ data = DataFrame() # for collecting the results
 
 # Valid inputs for the `letter` parameter of the URL are NBR or A through Z
 letters = 'NBR A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split()
-date_of_parsing = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+date_of_scraping = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 
 # Retrieve the data
 for letter in letters:
@@ -65,7 +65,7 @@ for letter in letters:
             end = start + response_len
         else:
             end = n_records
-        print('Fetching records ', start, 'to ', end)
+        print('Fetching band entries ', start, 'to ', end)
         
         for attempt in range(10):
             try:
@@ -74,7 +74,7 @@ for letter in letters:
                 # Store response
                 df = DataFrame(js['aaData'])
                 data = data.append(df)
-            # If the response fails the output won't be valid JSON, so retry
+            # If the response fails, r.json() will raise an exception, so retry 
             except JSONDecodeError:
                 print('JSONDecodeError on attempt ', attempt, ' of 10.')
                 print('Retrying...')
@@ -89,6 +89,7 @@ data.columns = column_names
 data.index = range(len(data))
 
 # Save to CSV
-print('Writing data to csv...')
-data.to_csv('MA-band-names_' + date_of_parsing + '.csv')
+f_name = 'MA-band-names_{}.csv'.format(date_of_scraping)
+print('Writing band data to csv file:', f_name)
+data.to_csv(f_name)
 print('Complete!')
