@@ -95,6 +95,7 @@ for letter in ['A']:
         print('Fetching review entries', start, 'to ', end)
 
         for attempt in range(10):
+            time.sleep(3) # Obeying their robots.txt "Crawl-delay: 3"
             try:
                 r = get_url(letter=letter, start=start, length=response_len)
                 r.encoding = encoding
@@ -112,9 +113,9 @@ for letter in ['A']:
         review_titles = []
         reviews = []
         print('Fetching review content...')
-        for j, link in enumerate(df['ReviewLink']):
-            time.sleep(1) # so as to not cause any issues with too much traffic
-            print('Review #', j+1)
+        for n, link in enumerate(df['ReviewLink']):
+            time.sleep(3)
+            print('Review #', n+1)
             linksoup = BeautifulSoup(link, 'html.parser')
             review_page = requests.get(linksoup.a['href'])
             review_page.encoding = encoding

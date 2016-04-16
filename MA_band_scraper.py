@@ -17,6 +17,7 @@
 # Concatenate & store outputs in a DataFrame
 # Save final DataFrame to csv
 
+import time
 import datetime
 import requests
 from pandas import DataFrame
@@ -55,11 +56,11 @@ for letter in letters:
     r = get_url(letter=letter, start=0, length=response_len)
     js = r.json()
     n_records = js['iTotalRecords']
-    n_js_files = int(n_records / response_len) + 1
+    n_chunks = int(n_records / response_len) + 1
     print('Total records = ', n_records)
-    
+
     # Retrieve chunks
-    for i in range(n_js_files):
+    for i in range(n_chunks):
         start = response_len * i
         if start + response_len < n_records:
             end = start + response_len
@@ -68,6 +69,7 @@ for letter in letters:
         print('Fetching band entries ', start, 'to ', end)
         
         for attempt in range(10):
+            time.sleep(3) # Obeying their robots.txt "Crawl-delay: 3"
             try:
                 r = get_url(letter=letter, start=start, length=response_len)
                 js = r.json()
