@@ -57,3 +57,61 @@ To visualize:
 of genre descriptor terms
 	* Color by distance from K-means centroid -> unclear if this matters
 	* Color by number of tokenized terms -> corresponds with concentric circles
+
+### Clustering on PCA results
+
+#### K-means
+Quick, but only finds spherical clusters. PCA results show non-circular
+clusters of different shapes and sizes.
+
+#### DBSCAN
+DBSCAN detects clusters based on point density. It takes a distance parameter
+$\epsilon$ (between points) and a minimum number of points (4-5 for 2D data)
+that defines a single cluster. It is capable of detecting clusters that are
+non-spherical in shape and clusters of different sizes.
+
+If we choose `min_points = 5` (`sklearn` default), then finding $\epsilon$
+requires we make a histogram of the distances to the 5th nearest point for all
+points in the data set. To make this histogram, use the
+`sklearn.neighbors.KDTree` class. Most points should lie below a distance from
+each other. Just above this value should be a good choice for $\epsilon$.
+
+### Network analysis
+
+Nodes: Bands
+
+Edges: Overlapping genre terms
+
+#### Visualization options
+
+##### Graph / NetworkX
+
+Graph definitions
+
+* Bands
+	* Nodes: Bands
+	* Edges: Overlapping genre terms
+
+* Genre descriptors
+	* Nodes: Unique Genre descriptors, sized by number (of bands)
+	* Edges: Overlapping genre terms
+
+
+Visualization approaches
+
+1. Edge emphasis: color by overlap term for top N genre terms
+
+2. Node emphasis: color nodes by K-means/DBSCAN cluster membership
+
+##### Word Cloud
+
+1. Word cloud for each cluster / country
+
+##### Breakdowns
+
+* By country - Interesting, but might be too verbose (how do we pick which
+countries?)
+* By K-means/DBSCAN cluster membership - Potentially interesting, possibly
+redundant
+* By status - Fewer overall visualizations, still interesting. Can see what
+used to be popular.
